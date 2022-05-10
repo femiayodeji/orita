@@ -1,0 +1,19 @@
+{
+  "name": "orita",
+  "version": "1.0.0",
+  "description": "meet clone",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/femiayodeji/orita.git"
+  },
+  "author": "Femi Ayodeji <femidotayodeji@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/femiayodeji/orita/issues"
+  },
+  "homepage": "https://github.com/femiayodeji/orita#readme"
+}
