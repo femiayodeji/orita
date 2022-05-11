@@ -1,19 +1,28 @@
 {
-  "name": "orita",
-  "version": "1.0.0",
-  "description": "meet clone",
-  "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/femiayodeji/orita.git"
-  },
-  "author": "Femi Ayodeji <femidotayodeji@gmail.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/femiayodeji/orita/issues"
-  },
-  "homepage": "https://github.com/femiayodeji/orita#readme"
+    "name": "orita",
+    "version": "1.0.0",
+    "description": "meet clone",
+    "main": "app.js",
+    "scripts": {
+        "start": "node app.js",
+        "start:dev": "nodemon app.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/femiayodeji/orita.git"
+    },
+    "author": "Femi Ayodeji <femidotayodeji@gmail.com>",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/femiayodeji/orita/issues"
+    },
+    "homepage": "https://github.com/femiayodeji/orita#readme",
+    "dependencies": {
+        "ejs": "^3.1.7",
+        "express": "^4.18.1",
+        "nodemon": "^2.0.16",
+        "peer": "^0.6.1",
+        "uuid": "^8.3.2"
+    }
 }
