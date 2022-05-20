@@ -26,6 +26,14 @@ io.on('connection', socket => {
     socket.on('join-room', (roomId, userId) => {
         socket.join(roomId);
         socket.to(roomId).emit('user-connected', userId);
+        // socket.on('ready', () => {
+        //     socket.to(roomId).emit('user-connected', userId);
+        // })
+
+        socket.on('disconnect', function() {
+            socket.to(roomId).emit('user-disconnected', userId)
+        });
+
     })
 })
 console.log("connected and listening at http://localhost:%s", port);

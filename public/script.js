@@ -10,53 +10,100 @@ var peer = new Peer(undefined, {
     port: '3000'
 });
 const ROOM_ID = "<%= roomId %>";
-let videoStream;
+let localVideoStream;
+let userId;
+const peers = {};
 
 navigator.mediaDevices.getUserMedia({
     video: true,
     // audio: true
 }).then(stream => {
-    videoStream = stream;
+    localVideoStream = stream;
     addVideoStream(videoDOM, stream);
 
-    // peer.on('call', call => {
-    //     console.log("answering...");
-    //     call.answer(stream);
-    //     const video = document.createElement('video')
-    //     call.on('stream', userVideoStream => {
-    //         addVideoStream(video, userVideoStream)
-    //     });
-    // });
-
-    socket.on('user-connected', (userId) => {
-        connectNewUser(userId, stream);
+    const rtc = new Peer(undefined, {
+        path: '/peerjs',
+        host: '/',
+        port: '3000'
     });
+
+    rtc.on('open', id => {
+        userId = id;
+        console.log("opening...", id);
+        socket.emit('join-room', ROOM_ID, id);
+    });
+
+    rtc.on('call', call => {
+        console.log("answering...");
+        call.answer(localVideoStream);
+        const video = document.createElement('video')
+        call.on('stream', userVideoStream => {
+            console.log("remote streaming....");
+            addVideoStream(video, userVideoStream)
+        });
+        // socket.emit("ready")
+    });
+
+    socket.on('user-connected', (id) => {
+        if (userId === id) return;
+        console.log("user connected:", id);
+        connectNewUser2(id, localVideoStream, rtc);
+    });
+
 }).catch((e) => {
     console.log("Error", e);
 })
 
-peer.on('open', id => {
-    console.log("opening...");
-    socket.emit('join-room', ROOM_ID, id);
-})
+// socket.on('user-connected', (id) => {
+//     if (userId === id) return;
+//     console.log("user connected:", id);
+//     connectNewUser(id, localVideoStream);
+// });
 
-peer.on('call', call => {
-    console.log("answering...");
-    call.answer(videoStream);
-    const video = document.createElement('video')
-    call.on('stream', userVideoStream => {
-        addVideoStream(video, userVideoStream)
-    });
-});
+// peer.on('open', id => {
+//     userId = id;
+//     console.log("opening...", id);
+//     socket.emit('join-room', ROOM_ID, id);
+// })
 
-const connectNewUser = (userId, stream) => {
+// peer.on('call', call => {
+//     console.log("answering...");
+//     call.answer(localVideoStream);
+//     const video = document.createElement('video')
+//     call.on('stream', userVideoStream => {
+//         console.log("remote streaming....");
+//         addVideoStream(video, userVideoStream)
+//     });
+//     socket.emit("ready")
+// });
+
+// peer.on('disconnected', function() {
+//     peers[userId].close();
+//     console.log("Disconnected", userId);
+//     delete peers[userId];
+// });
+
+const connectNewUser2 = (userId, stream, rtc) => {
     console.log("calling...");
-    const call = peer.call(userId, stream);
+    const call = rtc.call(userId, stream);
     const video = document.createElement('video');
     call.on('stream', userVideoStream => {
+        console.log("local streaming....");
         addVideoStream(video, userVideoStream)
     });
+    peers[userId] = call;
 }
+
+// const connectNewUser = (userId, stream) => {
+//     console.log("calling...");
+//     const call = peer.call(userId, stream);
+//     const video = document.createElement('video');
+//     call.on('stream', userVideoStream => {
+//         console.log("local streaming....");
+//         addVideoStream(video, userVideoStream)
+//     });
+//     peers[userId] = call;
+// }
 
 const addVideoStream = (video, stream) => {
     video.srcObject = stream;
