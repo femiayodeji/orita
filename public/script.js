@@ -6,7 +6,7 @@ videoDOM.muted = true;
 
 var peer = new Peer(undefined, {
     path: '/peerjs',
-    host: '/',
+    host: 'https://altorita.herokuapp.com',
     port: '443'
 });
 const ROOM_ID = "<%= roomId %>";
