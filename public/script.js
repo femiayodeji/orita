@@ -4,11 +4,6 @@ const videoGrid = document.getElementById('video-grid');
 const videoDOM = document.createElement('video');
 videoDOM.muted = true;
 
-var peer = new Peer(undefined, {
-    path: '/peerjs',
-    host: '/',
-    port: '443'
-});
 const ROOM_ID = "<%= roomId %>";
 let localVideoStream;
 let userId;
@@ -24,7 +19,7 @@ navigator.mediaDevices.getUserMedia({
     const rtc = new Peer(undefined, {
         path: '/peerjs',
         host: '/',
-        port: '3000'
+        port: '443'
     });
 
     rtc.on('open', id => {
