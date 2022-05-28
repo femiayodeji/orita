@@ -19,7 +19,7 @@ navigator.mediaDevices.getUserMedia({
     const rtc = new Peer(undefined, {
         path: '/peerjs',
         host: '/',
-        port: '443'
+        port: '3000' || '443'
     });
 
     rtc.on('open', id => {
@@ -42,43 +42,15 @@ navigator.mediaDevices.getUserMedia({
     socket.on('user-connected', (id) => {
         if (userId === id) return;
         console.log("user connected:", id);
-        connectNewUser2(id, localVideoStream, rtc);
+        connectNewUser(id, localVideoStream, rtc);
     });
 
 }).catch((e) => {
     console.log("Error", e);
 })
 
-// socket.on('user-connected', (id) => {
-//     if (userId === id) return;
-//     console.log("user connected:", id);
-//     connectNewUser(id, localVideoStream);
-// });
 
-// peer.on('open', id => {
-//     userId = id;
-//     console.log("opening...", id);
-//     socket.emit('join-room', ROOM_ID, id);
-// })
-
-// peer.on('call', call => {
-//     console.log("answering...");
-//     call.answer(localVideoStream);
-//     const video = document.createElement('video')
-//     call.on('stream', userVideoStream => {
-//         console.log("remote streaming....");
-//         addVideoStream(video, userVideoStream)
-//     });
-//     socket.emit("ready")
-// });
-
-// peer.on('disconnected', function() {
-//     peers[userId].close();
-//     console.log("Disconnected", userId);
-//     delete peers[userId];
-// });
-
-const connectNewUser2 = (userId, stream, rtc) => {
+const connectNewUser = (userId, stream, rtc) => {
     console.log("calling...");
     const call = rtc.call(userId, stream);
     const video = document.createElement('video');
@@ -89,17 +61,6 @@ const connectNewUser2 = (userId, stream, rtc) => {
     peers[userId] = call;
 }
 
-// const connectNewUser = (userId, stream) => {
-//     console.log("calling...");
-//     const call = peer.call(userId, stream);
-//     const video = document.createElement('video');
-//     call.on('stream', userVideoStream => {
-//         console.log("local streaming....");
-//         addVideoStream(video, userVideoStream)
-//     });
-//     peers[userId] = call;
-// }
-
 const addVideoStream = (video, stream) => {
     video.srcObject = stream;
     video.addEventListener('loadedmetadata', () => {
@@ -107,3 +68,18 @@ const addVideoStream = (video, stream) => {
     });
     videoGrid.append(video);
 }
+
+const audioController = document.querySelector(".audio-controller");
+audioController.addEventListener("click", (e) => {
+    const audioEnabled = localVideoStream.getAudioTracks()[0].enabled;
+    localVideoStream.getAudioTracks()[0].enabled = !audioEnabled;
+    if (audioEnabled) {
+        audioController.innerHTML = "Muted"
+    } else {
+        audioController.innerHTML = "Audio"
+    }
+});
+
+document.querySelector(".video-controller").addEventListener("click", (e) => {
+    alert("video");
+});
