@@ -80,6 +80,13 @@ audioController.addEventListener("click", (e) => {
     }
 });
 
-document.querySelector(".video-controller").addEventListener("click", (e) => {
-    alert("video");
+const videoController = document.querySelector(".video-controller");
+videoController.addEventListener("click", (e) => {
+    const videoEnabled = localVideoStream.getVideoTracks()[0].enabled;
+    localVideoStream.getVideoTracks()[0].enabled = !videoEnabled;
+    if (videoEnabled) {
+        videoController.innerHTML = "Blind"
+    } else {
+        videoController.innerHTML = "Video"
+    }
 });
