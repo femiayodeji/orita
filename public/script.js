@@ -74,9 +74,9 @@ audioController.addEventListener("click", (e) => {
     const audioEnabled = localVideoStream.getAudioTracks()[0].enabled;
     localVideoStream.getAudioTracks()[0].enabled = !audioEnabled;
     if (audioEnabled) {
-        audioController.innerHTML = "Muted"
+        audioController.innerHTML = `<i class="fa fa-microphone-slash"></i>`
     } else {
-        audioController.innerHTML = "Audio"
+        audioController.innerHTML = `<i class="fa fa-microphone"></i>`
     }
 });
 
@@ -85,8 +85,8 @@ videoController.addEventListener("click", (e) => {
     const videoEnabled = localVideoStream.getVideoTracks()[0].enabled;
     localVideoStream.getVideoTracks()[0].enabled = !videoEnabled;
     if (videoEnabled) {
-        videoController.innerHTML = "Blind"
+        videoController.innerHTML = `<i class="fa fa-eye-slash"></i>`
     } else {
-        videoController.innerHTML = "Video"
+        videoController.innerHTML = `<i class="fa fa-eye"></i>`
     }
 });
