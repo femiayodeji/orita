@@ -2,6 +2,7 @@ const socket = io('/');
 
 const videoGrid = document.getElementById('video-grid');
 const videoDOM = document.createElement('video');
+videoDOM.classList.add("full");
 videoDOM.muted = true;
 
 const ROOM_ID = "<%= roomId %>";

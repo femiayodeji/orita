@@ -1,25 +1,75 @@
-#video-grid {
+body {
+    height: 100%-webkit-fill-available;
+    margin: 0;
+    padding: 0;
     display: flex;
     justify-content: center;
 }
 
-video {
-    height: 300px;
-    width: 400px;
-    margin: 5px;
-    object-fit: cover;
+#video-grid {
+    height: 100% !important;
+    width: 100vw !important;
 }
 
-.fa.fa-video-camera .slash:after {
-    position: absolute;
-    content: "/";
-    color: white;
-    font-weight: bold;
-    font-size: 1.2em;
-    left: 0;
-    top: 0;
-    text-shadow: 3px 0px 0px rgba(0, 0, 0, 1);
-    line-height: 32px;
-    left: 18%;
-    font-family: Arial;
+video:not(.full) {
+    position: relative;
+    right: 0;
+    padding: 5px;
+    margin-left: 60%;
+    display: block;
+    height: 256px;
+    border-radius: 20px;
+    box-shadow: 4px 4px 3px rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+}
+
+video.full {
+    position: fixed;
+    width: 100% !important;
+    margin: 0;
+}
+
+#controllers {
+    position: fixed;
+    width: 90%;
+    bottom: 20px;
+    padding: 10px;
+    margin: 5%;
+    border-radius: 5px;
+    text-align: center;
+    z-index: 5000;
+}
+
+.icon {
+    font-size: 28px;
+    margin: 0 20px !important;
+}
+
+.fa {
+    margin: 10px;
+    padding: 5px 10px;
+    padding-top: 20px;
+    border-radius: 50%;
+    height: 50px;
+    width: 50px;
+    border: 1px solid #fff;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.fa-eye {
+    color: #fff;
+}
+
+.fa-eye-slash {
+    color: #f80000;
+    border-color: #f80000;
+}
+
+.fa-microphone {
+    color: #fff;
+}
+
+.fa-microphone-slash {
+    color: #f80000;
+    border-color: #f80000;
 }
