@@ -15,7 +15,7 @@ video:not(.full) {
     position: relative;
     right: 0;
     padding: 5px;
-    margin-left: 60%;
+    margin-left: 75%;
     display: block;
     height: 256px;
     border-radius: 20px;
@@ -24,9 +24,10 @@ video:not(.full) {
 }
 
 video.full {
-    position: fixed;
+    position: absolute;
     width: 100% !important;
     margin: 0;
+    top: 0
 }
 
 #controllers {

@@ -67,6 +67,13 @@ const addVideoStream = (video, stream) => {
     video.addEventListener('loadedmetadata', () => {
         video.play();
     });
+    video.addEventListener("click", (e) => {
+        const allVideos = document.querySelectorAll("#video-grid video");
+        for (const v of allVideos) {
+            v.classList.remove("full");
+        }
+        video.classList.add("full");
+    })
     videoGrid.append(video);
 }
 
