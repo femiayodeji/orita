@@ -20,7 +20,7 @@ navigator.mediaDevices.getUserMedia({
     const rtc = new Peer(undefined, {
         path: '/peerjs',
         host: '/',
-        port: '3000' || '443'
+        port: '443' //'3000'
     });
 
     rtc.on('open', id => {
