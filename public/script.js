@@ -42,7 +42,6 @@ navigator.mediaDevices.getUserMedia({
 
     socket.on('user-connected', (id) => {
         if (userId === id) return;
-        console.log("user connected:", id);
         connectNewUser(id, localVideoStream, rtc);
     });
 
@@ -50,7 +49,47 @@ navigator.mediaDevices.getUserMedia({
     console.log("Error", e);
 })
 
+const screenShare = (peer) => {
+    const displayMediaOptions = {
+        video: {
+            cursor: "always"
+        },
+        audio: false
+    };
 
+    navigator.mediaDevices.getDisplayMedia(displayMediaOptions)
+        .then(function(stream) {
+            localVideoStream = stream;
+            addVideoStream(videoDOM, stream);
+
+            const rtc = new Peer(undefined, {
+                path: '/peerjs',
+                host: '/',
+                port: '443' //'3000'
+            });
+
+            rtc.on('open', id => {
+                userId = id;
+                console.log("opening...", id);
+                socket.emit('join-room', ROOM_ID, id);
+            });
+
+            rtc.on('call', call => {
+                console.log("answering...");
+                call.answer(localVideoStream);
+                const video = document.createElement('video')
+                call.on('stream', userVideoStream => {
+                    console.log("remote streaming....");
+                    addVideoStream(video, userVideoStream)
+                });
+            });
+
+            socket.on('user-connected', (id) => {
+                if (userId === id) return;
+                connectNewUser(id, localVideoStream, rtc);
+            });
+        });
+}
 const connectNewUser = (userId, stream, rtc) => {
     console.log("calling...");
     const call = rtc.call(userId, stream);
@@ -97,4 +136,14 @@ videoController.addEventListener("click", (e) => {
     } else {
         videoController.innerHTML = `<i class="fa fa-eye"></i>`
     }
+});
+
+const screenShareController = document.querySelector(".screen-share-controller");
+screenShareController.addEventListener("click", (e) => {
+    if (screenShareController.innerHTML === `<i class="fa fa-clone"></i>`) {
+        screenShareController.innerHTML = `<i class="fa fa-window-restore"></i>`
+    } else {
+        screenShareController.innerHTML = `<i class="fa fa-clone"></i>`
+    }
+    console.log("Screen Share");
 });
