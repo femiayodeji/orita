@@ -8,28 +8,40 @@ videoDOM.muted = true;
 const ROOM_ID = "<%= roomId %>";
 let localVideoStream;
 let userId;
+let peer;
 const peers = {};
 
 navigator.mediaDevices.getUserMedia({
     video: true,
     audio: true
 }).then(stream => {
+    stream.getAudioTracks()[0].enabled = false;
     localVideoStream = stream;
+
     addVideoStream(videoDOM, stream);
 
-    const rtc = new Peer(undefined, {
+    peer = new Peer(undefined, {
         path: '/peerjs',
         host: '/',
-        port: '443' //'3000'
+        port: '3000' //'443'
     });
 
-    rtc.on('open', id => {
+    handleOpen(peer)
+    handleCall(peer)
+}).catch((e) => {
+    console.log("Error", e);
+})
+
+const handleOpen = (peer) => {
+    peer.on('open', id => {
         userId = id;
         console.log("opening...", id);
         socket.emit('join-room', ROOM_ID, id);
     });
+}
 
-    rtc.on('call', call => {
+const handleCall = (peer) => {
+    peer.on('call', call => {
         console.log("answering...");
         call.answer(localVideoStream);
         const video = document.createElement('video')
@@ -37,17 +49,13 @@ navigator.mediaDevices.getUserMedia({
             console.log("remote streaming....");
             addVideoStream(video, userVideoStream)
         });
-        // socket.emit("ready")
     });
+}
 
-    socket.on('user-connected', (id) => {
-        if (userId === id) return;
-        connectNewUser(id, localVideoStream, rtc);
-    });
-
-}).catch((e) => {
-    console.log("Error", e);
-})
+socket.on('user-connected', (id) => {
+    if (userId === id) return;
+    connectNewUser(id, localVideoStream, peer);
+});
 
 const screenShare = (peer) => {
     const displayMediaOptions = {
@@ -61,35 +69,13 @@ const screenShare = (peer) => {
         .then(function(stream) {
             localVideoStream = stream;
             addVideoStream(videoDOM, stream);
-
-            const rtc = new Peer(undefined, {
-                path: '/peerjs',
-                host: '/',
-                port: '443' //'3000'
-            });
-
-            rtc.on('open', id => {
-                userId = id;
-                console.log("opening...", id);
-                socket.emit('join-room', ROOM_ID, id);
-            });
-
-            rtc.on('call', call => {
-                console.log("answering...");
-                call.answer(localVideoStream);
-                const video = document.createElement('video')
-                call.on('stream', userVideoStream => {
-                    console.log("remote streaming....");
-                    addVideoStream(video, userVideoStream)
-                });
-            });
-
-            socket.on('user-connected', (id) => {
-                if (userId === id) return;
-                connectNewUser(id, localVideoStream, rtc);
-            });
-        });
+            handleOpen(peer)
+            handleCall(peer)
+        }).catch((e) => {
+            console.log("Error", e);
+        })
 }
+
 const connectNewUser = (userId, stream, rtc) => {
     console.log("calling...");
     const call = rtc.call(userId, stream);
