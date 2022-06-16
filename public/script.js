@@ -9,7 +9,12 @@ const ROOM_ID = "<%= roomId %>";
 let localVideoStream;
 let userId;
 let peer;
+const PORT = '3000' //'443'
 const peers = {};
+
+const audioController = document.querySelector(".audio-controller");
+const videoController = document.querySelector(".video-controller");
+const screenShareController = document.querySelector(".screen-share-controller");
 
 navigator.mediaDevices.getUserMedia({
     video: true,
@@ -23,11 +28,11 @@ navigator.mediaDevices.getUserMedia({
     peer = new Peer(undefined, {
         path: '/peerjs',
         host: '/',
-        port: '3000' //'443'
+        port: PORT
     });
 
     handleOpen(peer)
-    handleCall(peer)
+    handleCall(peer, localVideoStream)
 }).catch((e) => {
     console.log("Error", e);
 })
@@ -40,10 +45,10 @@ const handleOpen = (peer) => {
     });
 }
 
-const handleCall = (peer) => {
+const handleCall = (peer, stream) => {
     peer.on('call', call => {
         console.log("answering...");
-        call.answer(localVideoStream);
+        call.answer(stream);
         const video = document.createElement('video')
         call.on('stream', userVideoStream => {
             console.log("remote streaming....");
@@ -64,13 +69,25 @@ const screenShare = (peer) => {
         },
         audio: false
     };
-
     navigator.mediaDevices.getDisplayMedia(displayMediaOptions)
         .then(function(stream) {
-            localVideoStream = stream;
-            addVideoStream(videoDOM, stream);
+            screenShareController.innerHTML = `<i class="fa fa-window-restore"></i>`
+            screenShareController.addEventListener("click", (e) => {
+                console.log("Close screen share");
+                stream.getTracks()
+                    .forEach(track => track.stop())
+            });
+
+            const peer = new Peer(undefined, {
+                path: '/peerjs',
+                host: '/',
+                port: PORT
+            });
+            const screenVideoDOM = document.createElement('video');
+            addVideoStream(screenVideoDOM, stream);
             handleOpen(peer)
-            handleCall(peer)
+            handleCall(peer, stream)
+
         }).catch((e) => {
             console.log("Error", e);
         })
@@ -102,7 +119,6 @@ const addVideoStream = (video, stream) => {
     videoGrid.append(video);
 }
 
-const audioController = document.querySelector(".audio-controller");
 audioController.addEventListener("click", (e) => {
     const audioEnabled = localVideoStream.getAudioTracks()[0].enabled;
     localVideoStream.getAudioTracks()[0].enabled = !audioEnabled;
@@ -113,7 +129,6 @@ audioController.addEventListener("click", (e) => {
     }
 });
 
-const videoController = document.querySelector(".video-controller");
 videoController.addEventListener("click", (e) => {
     const videoEnabled = localVideoStream.getVideoTracks()[0].enabled;
     localVideoStream.getVideoTracks()[0].enabled = !videoEnabled;
@@ -124,12 +139,11 @@ videoController.addEventListener("click", (e) => {
     }
 });
 
-const screenShareController = document.querySelector(".screen-share-controller");
 screenShareController.addEventListener("click", (e) => {
     if (screenShareController.innerHTML === `<i class="fa fa-clone"></i>`) {
-        screenShareController.innerHTML = `<i class="fa fa-window-restore"></i>`
+        console.log("Screen Share");
+        screenShare(peer);
     } else {
         screenShareController.innerHTML = `<i class="fa fa-clone"></i>`
     }
-    console.log("Screen Share");
 });
