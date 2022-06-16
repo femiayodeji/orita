@@ -9,7 +9,7 @@ const ROOM_ID = "<%= roomId %>";
 let localVideoStream;
 let userId;
 let peer;
-const PORT = '3000' //'443'
+const PORT = '443' //'3000'
 const peers = {};
 
 const audioController = document.querySelector(".audio-controller");
